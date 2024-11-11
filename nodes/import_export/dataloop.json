@@ -1,0 +1,199 @@
+{
+  "displayName": "Databricks Integration",
+  "name": "databricks-integration",
+  "description": "Databricks Integration for Dataloop",
+  "scope": "project",
+  "version": "0.0.1",
+  "attributes": {
+    "Provider": "Databricks",
+    "Category": "Application",
+    "Deployed By": "Databricks",
+    "Media Type": ["Text"],
+    "Application Type": ["Pipeline Node"]
+  },
+  "codebase": {
+    "type": "git",
+    "gitUrl": "https://github.com/dataloop-ai-apps/integrations-databricks",
+    "gitTag": "0.0.1"
+  },
+
+  "components": {
+    "pipelineNodes": [
+      {
+        "invoke": {
+          "type": "function",
+          "namespace": "databricks-integ-service.databricks-integ-module.create_table"
+        },
+        "name": "Import Databricks",
+        "categories": ["Databricks"],
+        "displayName": "Import Databricks",
+        "description": "Import Databricks Table into Dataloop",
+        "scope": "project",
+        "configuration": {
+          "fields": [
+            {
+              "name": "name",
+              "title": "Node Name",
+              "props": {
+                "title": true,
+                "type": "string",
+                "default": "Import Databricks",
+                "required": true,
+                "placeholder": "Insert node name"
+              },
+              "rules": [
+                {
+                  "type": "required",
+                  "effect": "error"
+                }
+              ],
+              "widget": "dl-input"
+            }
+          ]
+        }
+      },
+      {
+        "invoke": {
+          "type": "function",
+          "namespace": "databricks-integ-service.databricks-integ-module.update_table"
+        },
+        "name": "Export Databricks",
+        "categories": ["Databricks"],
+        "displayName": "Export Databricks",
+        "description": "Export Dataloop Best Response to Databricks",
+        "scope": "project",
+        "configuration": {
+          "fields": [
+            {
+              "name": "name",
+              "title": "Node Name",
+              "props": {
+                "title": true,
+                "type": "string",
+                "default": "Export Databricks",
+                "required": true,
+                "placeholder": "Insert node name"
+              },
+              "rules": [
+                {
+                  "type": "required",
+                  "effect": "error"
+                }
+              ],
+              "widget": "dl-input"
+            }
+          ]
+        }
+      }
+    ],
+    "modules": [
+      {
+        "name": "databricks-integ-module",
+        "entryPoint": "nodes/import_export/databricks_base.py",
+        "className": "DatabricksBase",
+        "computeConfig": "databricks-integ-service",
+        "integrations": ["dl-dbrx-client-secret"],
+        "functions": [
+          {
+            "name": "create_table",
+            "input": [
+              {
+                "type": "String",
+                "name": "server_hostname"
+              },
+              {
+                "type": "String",
+                "name": "databricks_client_id"
+              },
+              {
+                "type": "String",
+                "name": "databricks_http_path"
+              },
+              {
+                "type": "String",
+                "name": "catalog"
+              },
+              {
+                "type": "String",
+                "name": "schema"
+              },
+              {
+                "type": "String",
+                "name": "table_name"
+              },
+              {
+                "type": "String",
+                "name": "dataset_id"
+              }
+            ],
+            "output": [
+              {
+                "type": "Item[]",
+                "name": "items"
+              }
+            ],
+            "displayIcon": "icon-dl-databricks"
+          },
+          {
+            "name": "update_table",
+            "input": [
+              {
+                "type": "Item",
+                "name": "item"
+              },
+              {
+                "type": "String",
+                "name": "server_hostname"
+              },
+              {
+                "type": "String",
+                "name": "databricks_client_id"
+              },
+              {
+                "type": "String",
+                "name": "databricks_http_path"
+              },
+              {
+                "type": "String",
+                "name": "catalog"
+              },
+              {
+                "type": "String",
+                "name": "schema"
+              },
+              {
+                "type": "String",
+                "name": "table_name"
+              }
+            ],
+            "output": [
+              {
+                "type": "Item",
+                "name": "item"
+              }
+            ],
+            "displayIcon": "icon-dl-databricks"
+          }
+        ]
+      }
+    ],
+    "computeConfigs": [
+      {
+        "name": "databricks-integ-service",
+        "moduleName": "databricks-integ-module",
+        "runtime": {
+          "podType": "regular-xs",
+          "runnerImage": "gcr.io/viewo-g/piper/agent/gpu/databricks-poc:0.0.1",
+          "numReplicas": 1,
+          "concurrency": 10,
+          "autoscaler": {
+            "type": "rabbitmq",
+            "minReplicas": 0,
+            "maxReplicas": 2,
+            "queueLength": 10
+          }
+        }
+      }
+    ]
+  }
+}
