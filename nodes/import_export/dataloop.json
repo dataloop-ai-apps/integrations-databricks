@@ -8,15 +8,22 @@
     "Provider": "Databricks",
     "Category": "Application",
     "Deployed By": "Databricks",
-    "Media Type": ["Text"],
-    "Application Type": ["Pipeline Node"]
+    "Media Type": [
+      "Text"
+    ],
+    "Application Type": [
+      "Pipeline Node"
+    ],
+    "Hub": [
+      "Dataloop",
+      "Databricks"
+    ]
   },
   "codebase": {
     "type": "git",
     "gitUrl": "https://github.com/dataloop-ai-apps/integrations-databricks",
     "gitTag": "0.0.2"
   },
-
   "components": {
     "pipelineNodes": [
       {
@@ -25,7 +32,9 @@
           "namespace": "databricks-integ-service.databricks-integ-module.create_table"
         },
         "name": "Import Databricks",
-        "categories": ["Databricks"],
+        "categories": [
+          "Databricks"
+        ],
         "displayName": "Import Databricks",
         "description": "Import Databricks Table into Dataloop",
         "scope": "project",
@@ -58,7 +67,9 @@
           "namespace": "databricks-integ-service.databricks-integ-module.update_table"
         },
         "name": "Export Databricks",
-        "categories": ["Databricks"],
+        "categories": [
+          "Databricks"
+        ],
         "displayName": "Export Databricks",
         "description": "Export Dataloop Best Response to Databricks",
         "scope": "project",
@@ -92,7 +103,9 @@
         "entryPoint": "nodes/import_export/databricks_base.py",
         "className": "DatabricksBase",
         "computeConfig": "databricks-integ-service",
-        "integrations": ["dl-dbrx-client-secret"],
+        "integrations": [
+          "dl-dbrx-client-secret"
+        ],
         "functions": [
           {
             "name": "create_table",
