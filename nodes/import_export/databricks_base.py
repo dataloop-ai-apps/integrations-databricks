@@ -51,7 +51,12 @@ class DatabricksBase(dl.BaseServiceRunner):
                 host=f"https://{server_hostname}",
                 client_id=databricks_client_id,
                 client_secret=os.environ.get("DATABRICKS_CLIENT_SECRET"),
+                product="DatabricksBaseService",
+                product_version="1.0",
             )
+
+            config.with_user_agent_extra("integration", "Dataloop")
+
             return oauth_service_principal(config)
 
         try:
