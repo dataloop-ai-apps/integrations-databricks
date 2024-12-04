@@ -26,6 +26,11 @@ To set up the integration, you'll need the following information:
 
 For detailed instructions on obtaining these prerequisites, refer to the [Databricks OAuth Documentation](https://docs.databricks.com/en/dev-tools/authentication-oauth.html).
 
+## Attribution
+
+This integration references Databricks technology and documentation.
+**Copyright 2023 Databricks, Inc.**
+
 ## Pipeline Nodes
 
 - **Import Databricks**
@@ -34,3 +39,7 @@ For detailed instructions on obtaining these prerequisites, refer to the [Databr
 
 - **Export Databricks**
   - This node takes the response marked as the best and updates the corresponding Databricks table row with the response, model name and ID from Dataloop.
+
+## License
+
+This project is licensed under the **Apache License 2.0.**
