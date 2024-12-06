@@ -26,6 +26,10 @@ To set up the integration, you'll need the following information:
 
 For detailed instructions on obtaining these prerequisites, refer to the [Databricks OAuth Documentation](https://docs.databricks.com/en/dev-tools/authentication-oauth.html).
 
+## Attributions
+
+This project makes use of the **Databricks SDK for Python**, which is licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+
 ## Pipeline Nodes
 
 - **Import Databricks**
