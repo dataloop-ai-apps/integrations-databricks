@@ -1,8 +1,11 @@
-import os
-from databricks.sdk.core import oauth_service_principal, Config
-from databricks import sql
-import dtlpy as dl
 import logging
+import os
+import tempfile
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
+import dtlpy as dl
+from databricks import sql
+from databricks.sdk.core import Config, oauth_service_principal
 
 logger = logging.getLogger(name="databricks-connect")
 
@@ -17,6 +20,7 @@ class DatabricksBase(dl.BaseServiceRunner):
         Initializes the ServiceRunner with Databricks credentials.
         """
         self.logger = logger
+        self.max_workers = 5
 
     def call_databricks_query(
         self,
@@ -25,6 +29,7 @@ class DatabricksBase(dl.BaseServiceRunner):
         databricks_http_path: str,
         query: str,
         params: tuple = None,
+        tempdir: str = '/tmp/',
     ):
         """
         Executes a SQL query on Databricks using provided credentials and connection settings.
@@ -65,6 +70,7 @@ class DatabricksBase(dl.BaseServiceRunner):
                 http_path=databricks_http_path,
                 credentials_provider=credential_provider,
                 connection_timeout=10,
+                staging_allowed_local_path=tempdir,
             ) as connection:
                 cursor = connection.cursor()
                 if params:
@@ -73,7 +79,9 @@ class DatabricksBase(dl.BaseServiceRunner):
                     cursor.execute(query)
 
                 # Fetch results for SELECT queries, otherwise commit changes
-                if query.strip().upper().startswith("SELECT"):
+                if query.strip().upper().startswith(
+                    "SELECT"
+                ) or query.strip().upper().startswith("LIST"):
                     result = cursor.fetchall()
                 else:
                     connection.commit()
@@ -218,4 +226,154 @@ class DatabricksBase(dl.BaseServiceRunner):
             table_name,
             item.id,
         )
+        return item
+
+    def download_file_from_volume(
+        self,
+        server_hostname: str,
+        databricks_client_id: str,
+        databricks_http_path: str,
+        volume_path: str,
+        local_file_path: str,
+        tempdir: str,
+    ):
+        """
+        Downloads a file from a Databricks Volume.
+
+        :param server_hostname: Databricks server hostname.
+        :param databricks_client_id: Databricks client ID.
+        :param databricks_http_path: Databricks HTTP path.
+        :param volume_path: Path in the Databricks Volume.
+        :param local_file_path: Path to save the downloaded file.
+        :param dataset_id: The ID of the dataset to upload the downloaded file.
+        """
+
+        local_file_path_temp = os.path.join(tempdir, os.path.basename(local_file_path))
+        query = f"GET '{volume_path}' TO '{local_file_path_temp}'"
+
+        self.logger.info(
+            "Downloading file from volume '%s' to '%s'.", volume_path, local_file_path
+        )
+        self.call_databricks_query(
+            server_hostname,
+            databricks_client_id,
+            databricks_http_path,
+            query,
+            tempdir=tempdir,
+        )
+
+        self.logger.info("File downloaded successfully.")
+
+    def upload_dbrx_folder_to_dtlp(
+        self,
+        server_hostname: str,
+        databricks_client_id: str,
+        databricks_http_path: str,
+        catalog: str,
+        schema: str,
+        volume_name: str,
+        dataset_id: str,
+    ):
+        """
+        Uploads a folder to a Databricks Volume.
+
+        :param server_hostname: Databricks server hostname.
+        :param databricks_client_id: Databricks client ID.
+        :param databricks_http_path: Databricks HTTP path.
+        :param catalog: The Databricks catalog.
+        :param schema: The Databricks schema.
+        :param volume_name: Name of the Databricks Volume.
+        :param dataset_id: The ID of the dataset to upload the downloaded file.
+
+        :return: The uploaded items or None if an error occurs.
+        """
+
+        local_folder_path = tempfile.mkdtemp() + "/"
+        volume_path = f"/Volumes/{catalog}/{schema}/{volume_name}"
+
+        self.logger.info(
+            "Uploading folder '%s' to volume '%s'.", local_folder_path, volume_path
+        )
+
+        query = f"LIST '{volume_path}'"
+        files = self.call_databricks_query(
+            server_hostname,
+            databricks_client_id,
+            databricks_http_path,
+            query,
+        )
+
+        self.logger.info("Files in volume: %s", files)
+
+        # Submit tasks and handle exceptions
+        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+            futures = []
+            for file in files:
+                future = executor.submit(
+                    self.download_file_from_volume,
+                    server_hostname,
+                    databricks_client_id,
+                    databricks_http_path,
+                    file.path,
+                    os.path.join(local_folder_path, file.path),
+                    local_folder_path,
+                )
+                futures.append(future)
+
+            # Wait for all tasks and handle exceptions
+            for future in as_completed(futures):
+                try:
+                    future.result()  # Retrieve the result to check for exceptions
+                except Exception as e:
+                    self.logger.error(f"Task failed with exception: {e}")
+
+        dataset = dl.datasets.get(dataset_id=dataset_id)
+
+        items = list(dataset.items.upload(local_path=local_folder_path, overwrite=True))
+
+        self.logger.info("Folder uploaded successfully.")
+
+        return items
+
+    def upload_item_to_volume(
+        self,
+        item: dl.Item,
+        server_hostname: str,
+        databricks_client_id: str,
+        databricks_http_path: str,
+        catalog: str,
+        schema: str,
+        volume_name: str,
+    ):
+        """
+
+        Uploads an item to a Databricks Volume.
+
+        :param item: The Dataloop item to upload.
+        :param server_hostname: Databricks server hostname.
+        :param databricks_client_id: Databricks client ID.
+        :param databricks_http_path: Databricks HTTP path.
+        :param catalog: The Databricks catalog.
+        :param schema: The Databricks schema.
+        :param volume_name: Name of the Databricks Volume.
+        """
+
+        file_path = item.download(save_locally=True)
+        volume_path = f"/Volumes/{catalog}/{schema}/{volume_name}/{item.name}"
+        query = f"PUT '{file_path}' INTO '{volume_path}' OVERWRITE"
+
+        self.logger.info("Uploading item '%s' to volume '%s'.", item.name, volume_path)
+
+        self.call_databricks_query(
+            server_hostname,
+            databricks_client_id,
+            databricks_http_path,
+            query,
+            tempdir=os.path.dirname(file_path),
+        )
+        self.logger.info("File uploaded successfully.")
+
+        # Clean up the downloaded file
+        os.remove(file_path)
+
         return item
