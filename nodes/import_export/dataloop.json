@@ -25,9 +25,9 @@
           "type": "function",
           "namespace": "databricks-integ-service.databricks-integ-module.create_table"
         },
-        "name": "Import Databricks",
+        "name": "Import Table",
         "categories": ["Databricks"],
-        "displayName": "Import Databricks",
+        "displayName": "Import Table",
         "description": "Import Databricks Table into Dataloop",
         "scope": "project",
         "configuration": {
@@ -38,7 +38,7 @@
               "props": {
                 "title": true,
                 "type": "string",
-                "default": "Import Databricks",
+                "default": "Import Table",
                 "required": true,
                 "placeholder": "Insert node name"
               },
@@ -58,9 +58,9 @@
           "type": "function",
           "namespace": "databricks-integ-service.databricks-integ-module.update_table"
         },
-        "name": "Export Databricks",
+        "name": "Export to Table",
         "categories": ["Databricks"],
-        "displayName": "Export Databricks",
+        "displayName": "Export to Table",
         "description": "Export Dataloop Best Response to Databricks",
         "scope": "project",
         "configuration": {
@@ -71,7 +71,73 @@
               "props": {
                 "title": true,
                 "type": "string",
-                "default": "Export Databricks",
+                "default": "Export to Table",
+                "required": true,
+                "placeholder": "Insert node name"
+              },
+              "rules": [
+                {
+                  "type": "required",
+                  "effect": "error"
+                }
+              ],
+              "widget": "dl-input"
+            }
+          ]
+        }
+      },
+      {
+        "invoke": {
+          "type": "function",
+          "namespace": "databricks-integ-service.databricks-integ-module.upload_dbrx_folder_to_dtlp"
+        },
+        "name": "Import Volume",
+        "categories": ["Databricks"],
+        "displayName": "Import Volume",
+        "description": "Import Databricks Volume into Dataloop",
+        "scope": "project",
+        "configuration": {
+          "fields": [
+            {
+              "name": "name",
+              "title": "Node Name",
+              "props": {
+                "title": true,
+                "type": "string",
+                "default": "Import Volume",
+                "required": true,
+                "placeholder": "Insert node name"
+              },
+              "rules": [
+                {
+                  "type": "required",
+                  "effect": "error"
+                }
+              ],
+              "widget": "dl-input"
+            }
+          ]
+        }
+      },
+      {
+        "invoke": {
+          "type": "function",
+          "namespace": "databricks-integ-service.databricks-integ-module.upload_item_to_volume"
+        },
+        "name": "Export Item to Volume",
+        "categories": ["Databricks"],
+        "displayName": "Export Item to Volume",
+        "description": "Export Dataloop Item to Databricks Volume",
+        "scope": "project",
+        "configuration": {
+          "fields": [
+            {
+              "name": "name",
+              "title": "Node Name",
+              "props": {
+                "title": true,
+                "type": "string",
+                "default": "Export Item to Volume",
                 "required": true,
                 "placeholder": "Insert node name"
               },
@@ -165,6 +231,86 @@
               {
                 "type": "String",
                 "name": "table_name"
+              }
+            ],
+            "output": [
+              {
+                "type": "Item",
+                "name": "item"
+              }
+            ],
+            "displayIcon": "icon-dl-databricks"
+          },
+          {
+            "name": "upload_dbrx_folder_to_dtlp",
+            "input": [
+              {
+                "type": "String",
+                "name": "server_hostname"
+              },
+              {
+                "type": "String",
+                "name": "databricks_client_id"
+              },
+              {
+                "type": "String",
+                "name": "databricks_http_path"
+              },
+              {
+                "type": "String",
+                "name": "catalog"
+              },
+              {
+                "type": "String",
+                "name": "schema"
+              },
+              {
+                "type": "String",
+                "name": "volume_name"
+              },
+              {
+                "type": "String",
+                "name": "dataset_id"
+              }
+            ],
+            "output": [
+              {
+                "type": "Item[]",
+                "name": "items"
+              }
+            ],
+            "displayIcon": "icon-dl-databricks"
+          },
+          {
+            "name": "upload_item_to_volume",
+            "input": [
+              {
+                "type": "Item",
+                "name": "item"
+              },
+              {
+                "type": "String",
+                "name": "server_hostname"
+              },
+              {
+                "type": "String",
+                "name": "databricks_client_id"
+              },
+              {
+                "type": "String",
+                "name": "databricks_http_path"
+              },
+              {
+                "type": "String",
+                "name": "catalog"
+              },
+              {
+                "type": "String",
+                "name": "schema"
+              },
+              {
+                "type": "String",
+                "name": "volume_name"
               }
             ],
             "output": [

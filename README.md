@@ -32,9 +32,11 @@ This project makes use of the **Databricks SDK for Python**, which is licensed u
 
 ## Pipeline Nodes
 
-- **Import Databricks**
-
+- **Import Table**
   - This node retrieves prompts from a selected Databricks table and adds them to a specified dataset in Dataloop, creating prompt items accordingly.
-
-- **Export Databricks**
+- **Export to Table**
   - This node takes the response marked as the best and updates the corresponding Databricks table row with the response, model name and ID from Dataloop.
+- **Import Volume**
+  - This node transfers all files from a specified Databricks volume into a designated Dataloop dataset, preserving the structure for seamless integration and accessibility.
+- **Export item to Volume**
+  - This node transfers item from Dataloop into a designated Databricks volume.
