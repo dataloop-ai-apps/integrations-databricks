@@ -331,6 +331,8 @@ class DatabricksBase(dl.BaseServiceRunner):
 
         items = dataset.items.upload(local_path=local_folder_path, overwrite=True,return_as_list=True,raise_on_error=True)
 
+        self.logger.info("Folder uploaded successfully.")
+
         return items
 
     def upload_item_to_volume(
