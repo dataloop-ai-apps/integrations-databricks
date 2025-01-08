@@ -329,14 +329,7 @@ class DatabricksBase(dl.BaseServiceRunner):
 
         dataset = dl.datasets.get(dataset_id=dataset_id)
 
-        result = dataset.items.upload(local_path=local_folder_path, overwrite=True)
-
-        # Ensure result is iterable, then convert to a list
-        items = list(
-            result
-            if isinstance(result, (list, tuple, set)) or hasattr(result, '__iter__')
-            else [result]
-        )
+        items = dataset.items.upload(local_path=local_folder_path, overwrite=True,return_as_list=True,raise_on_error=True)
 
         return items
 
