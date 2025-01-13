@@ -359,7 +359,7 @@ class DatabricksBase(dl.BaseServiceRunner):
         """
 
         file_path = item.download(save_locally=True)
-        volume_path = f"/Volumes/{catalog}/{schema}/{volume_name}/{item.name}"
+        volume_path = f"/Volumes/{catalog}/{schema}/{volume_name}/{item.filename}"
         query = f"PUT '{file_path}' INTO '{volume_path}' OVERWRITE"
 
         self.logger.info("Uploading item '%s' to volume '%s'.", item.name, volume_path)
@@ -371,9 +371,12 @@ class DatabricksBase(dl.BaseServiceRunner):
             query,
             tempdir=os.path.dirname(file_path),
         )
-        self.logger.info("File uploaded successfully.")
+        self.logger.info(
+            "Successfully uploaded file '%s' to volume '%s'", item.filename, volume_path
+        )
 
         # Clean up the downloaded file
+
         os.remove(file_path)
 
         return item
