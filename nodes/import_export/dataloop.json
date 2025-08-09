@@ -3,7 +3,7 @@
   "name": "databricks-integration",
   "description": "Databricks Integration for Dataloop",
   "scope": "project",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "attributes": {
     "Provider": "Databricks",
     "Category": "Application",
@@ -16,7 +16,7 @@
   "codebase": {
     "type": "git",
     "gitUrl": "https://github.com/dataloop-ai-apps/integrations-databricks",
-    "gitTag": "0.0.8"
+    "gitTag": "0.0.9"
   },
   "components": {
     "pipelineNodes": [
