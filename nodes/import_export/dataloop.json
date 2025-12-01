@@ -3,7 +3,7 @@
   "name": "databricks-integration",
   "description": "Databricks Integration for Dataloop",
   "scope": "project",
-  "version": "0.0.7",
+  "version": "0.0.10",
   "attributes": {
     "Provider": "Databricks",
     "Category": "Application",
@@ -16,7 +16,7 @@
   "codebase": {
     "type": "git",
     "gitUrl": "https://github.com/dataloop-ai-apps/integrations-databricks",
-    "gitTag": "0.0.7"
+    "gitTag": "0.0.10"
   },
   "components": {
     "pipelineNodes": [
@@ -330,7 +330,7 @@
         "moduleName": "databricks-integ-module",
         "runtime": {
           "podType": "regular-xs",
-          "runnerImage": "gcr.io/viewo-g/piper/agent/gpu/databricks-poc:0.0.1",
+          "runnerImage": "gcr.io/viewo-g/piper/agent/cpu/databricks-poc:0.0.2",
           "numReplicas": 1,
           "concurrency": 10,
           "autoscaler": {
