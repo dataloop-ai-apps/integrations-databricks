@@ -145,7 +145,7 @@ class DatabricksBase(dl.BaseServiceRunner):
             )
             prompt_items.append(prompt_item)
 
-        # Upload PromptItems to Dataloop
+        # Upload PromptItems to DDOE
         items = list(dataset.items.upload(local_path=prompt_items, overwrite=True))
         self.logger.info(
             "Successfully uploaded %d items to dataset '%s'.", len(items), dataset_id
@@ -163,9 +163,9 @@ class DatabricksBase(dl.BaseServiceRunner):
         table_name: str,
     ):
         """
-        Updates the specified table with best response information extracted from Dataloop item annotations.
+        Updates the specified table with best response information extracted from DDOE item annotations.
 
-        :param item: The Dataloop item to update in Databricks.
+        :param item: The DDOE item to update in Databricks.
         :param server_hostname: The hostname of the Databricks server.
         :param databricks_client_id: The client ID for Databricks.
         :param databricks_client_secret: The client secret for Databricks.
@@ -349,7 +349,7 @@ class DatabricksBase(dl.BaseServiceRunner):
 
         Uploads an item to a Databricks Volume.
 
-        :param item: The Dataloop item to upload.
+        :param item: The DDOE item to upload.
         :param server_hostname: Databricks server hostname.
         :param databricks_client_id: Databricks client ID.
         :param databricks_http_path: Databricks HTTP path.
