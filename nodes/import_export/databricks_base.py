@@ -60,7 +60,7 @@ class DatabricksBase(dl.BaseServiceRunner):
                 product_version="1.0",
             )
 
-            config.with_user_agent_extra("integration", "DDOE")
+            config.with_user_agent_extra("integration", "Dataloop")
 
             return oauth_service_principal(config)
 
