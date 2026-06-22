@@ -1,7 +1,7 @@
 {
   "displayName": "Databricks Integration",
   "name": "databricks-integration",
-  "description": "Databricks Integration for Dataloop",
+  "description": "Databricks Integration for DDOE",
   "scope": "project",
   "version": "0.0.10",
   "attributes": {
@@ -11,7 +11,7 @@
     "Deployed By": "Databricks",
     "Media Type": ["Text"],
     "Application Type": ["Pipeline Node"],
-    "Hub": ["Dataloop", "Databricks"]
+    "Hub": ["DDOE", "Databricks"]
   },
   "codebase": {
     "type": "git",
@@ -28,7 +28,7 @@
         "name": "Import Table",
         "categories": ["Databricks"],
         "displayName": "Import Table",
-        "description": "Import Databricks Table into Dataloop",
+        "description": "Import Databricks Table into DDOE",
         "scope": "project",
         "configuration": {
           "fields": [
@@ -61,7 +61,7 @@
         "name": "Export to Table",
         "categories": ["Databricks"],
         "displayName": "Export to Table",
-        "description": "Export Dataloop Best Response to Databricks",
+        "description": "Export DDOE Best Response to Databricks",
         "scope": "project",
         "configuration": {
           "fields": [
@@ -94,7 +94,7 @@
         "name": "Import Volume",
         "categories": ["Databricks"],
         "displayName": "Import Volume",
-        "description": "Import Databricks Volume into Dataloop",
+        "description": "Import Databricks Volume into DDOE",
         "scope": "project",
         "configuration": {
           "fields": [
@@ -127,7 +127,7 @@
         "name": "Export Item to Volume",
         "categories": ["Databricks"],
         "displayName": "Export Item to Volume",
-        "description": "Export Dataloop Item to Databricks Volume",
+        "description": "Export DDOE Item to Databricks Volume",
         "scope": "project",
         "configuration": {
           "fields": [
